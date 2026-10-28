@@ -421,9 +421,21 @@ namespace SW2URDF.UI
 
         private void CheckLinksForWarnings(Link node, StringBuilder builder)
         {
-            string msg = "";
+            List<string> msgs = new List<string>();
+            if (!node.isFixedFrame && node.ExportComponents.Count == 0)
+            {
+                msgs.Add("no SolidWorks components selected (empty mesh, zero mass)");
+            }
 
-            if (!string.IsNullOrWhiteSpace(msg))
+            string type = node.Joint.Type;
+            if (node.Parent != null && (type == "revolute" || type == "prismatic") &&
+                node.Joint.Limit.Lower == 0 && node.Joint.Limit.Upper == 0)
+            {
+                msgs.Add("joint limits are 0 to 0, the joint cannot move. Enter lower/upper " +
+                    "limits or use a continuous joint");
+            }
+
+            foreach (string msg in msgs)
             {
                 builder.Append(node.Name + " - " + msg + "\r\n");
             }

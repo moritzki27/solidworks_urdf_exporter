@@ -310,6 +310,17 @@ namespace SW2URDF.URDFExport
             MathTransform jointTransform = GetCoordinateSystemTransform(link.Joint.CoordinateSystemName);
             List<Body2> bodies = GetBodies(link.ExportComponents);
 
+            // A MassProperty without bodies reports the whole assembly, so don't ask it
+            if (bodies.Count == 0)
+            {
+                logger.Warn("Link " + link.Name + " has no bodies, setting its inertial values to zero");
+                link.Inertial.Inertia.SetMomentMatrix(new double[9]);
+                link.Inertial.Mass.Value = 0;
+                link.Inertial.Origin.SetXYZ(new double[3] { 0, 0, 0 });
+                link.Inertial.Origin.SetRPY(new double[3] { 0, 0, 0 });
+                return;
+            }
+
             double[] moment = GetComponentsMomentOfInertia(bodies, jointTransform);
             link.Inertial.Inertia.SetMomentMatrix(moment);
 

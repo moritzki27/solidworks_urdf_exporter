@@ -38,7 +38,7 @@
     </UpgradeBackupLocation>
     <StartProgram>C:\PROGRA~1\SOLIDW~1\SOLIDW~1\\SldWorks.exe</StartProgram>
     <StartAction>Program</StartAction>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <OldToolsVersion>2.0</OldToolsVersion>
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <TargetFrameworkProfile>
@@ -406,6 +406,7 @@
     <Compile Include="URDF\URDFAttribute.cs" />
     <Compile Include="URDFExport\ExportPropertyManager.cs" />
     <Compile Include="URDFExport\URDFPackage.cs" />
+    <Compile Include="URDFExport\SubassemblyResolver.cs" />
     <Compile Include="URDF\URDFElement.cs" />
     <Compile Include="URDF\URDFWriter.cs" />
     <Compile Include="URDF\Visual.cs" />

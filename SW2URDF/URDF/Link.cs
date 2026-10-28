@@ -51,6 +51,20 @@ namespace SW2URDF.URDF
 
         public List<Component2> SWComponents;
 
+        // Part components the selected SWComponents expand to, recursing through
+        // sub-assemblies. Filled by SubassemblyResolver before export, null until then.
+        public List<Component2> SWLeafComponents;
+
+        // Components whose geometry makes up this link
+        public List<Component2> ExportComponents
+        {
+            get
+            {
+                return (SWLeafComponents != null) ?
+                    SWLeafComponents : SWComponents;
+            }
+        }
+
         [DataMember]
         public List<byte[]> SWComponentPIDs;
 
@@ -165,6 +179,8 @@ namespace SW2URDF.URDF
             if (externalLink.SWComponents != null)
             {
                 SWComponents = new List<Component2>(externalLink.SWComponents);
+                SWLeafComponents = (externalLink.SWLeafComponents != null) ?
+                    new List<Component2>(externalLink.SWLeafComponents) : null;
             }
             else
             {

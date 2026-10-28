@@ -364,7 +364,7 @@ namespace SW2URDF.UI
 
             SelectData data = manager.CreateSelectData();
             data.Mark = -1;
-            foreach (Component2 component in node.Link.SWComponents)
+            foreach (Component2 component in node.Link.ExportComponents)
             {
                 component.Select4(true, data, false);
             }
@@ -437,7 +437,7 @@ namespace SW2URDF.UI
 
             SelectData data = manager.CreateSelectData();
             data.Mark = -1;
-            foreach (Component2 component in node.Link.SWComponents)
+            foreach (Component2 component in node.Link.ExportComponents)
             {
                 component.Select4(true, data, false);
             }

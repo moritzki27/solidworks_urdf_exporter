@@ -160,6 +160,15 @@ namespace SW2URDF.URDFExport
             ExportErrorWhy = "";
             URDFRobot = new Robot();
 
+            // Expand selected sub-assemblies into the parts each link actually owns
+            string resolveError = SubassemblyResolver.ResolveLeafComponents(ActiveSWModel, baseNode);
+            if (!string.IsNullOrWhiteSpace(resolveError))
+            {
+                MessageBox.Show(resolveError);
+                logger.Warn(resolveError);
+                return false;
+            }
+
             progressBar.Start(0, CommonSwOperations.GetCount(baseNode.Nodes) + 1, "Building links");
             int count = 0;
 
@@ -299,7 +308,7 @@ namespace SW2URDF.URDFExport
         {
             // Get the SolidWorks MathTransform that corresponds to the child coordinate system
             MathTransform jointTransform = GetCoordinateSystemTransform(link.Joint.CoordinateSystemName);
-            List<Body2> bodies = GetBodies(link.SWComponents);
+            List<Body2> bodies = GetBodies(link.ExportComponents);
 
             double[] moment = GetComponentsMomentOfInertia(bodies, jointTransform);
             link.Inertial.Inertia.SetMomentMatrix(moment);
@@ -318,12 +327,12 @@ namespace SW2URDF.URDFExport
             link.Collision.Origin.SetXYZ(new double[3] { 0, 0, 0 });
             link.Collision.Origin.SetRPY(new double[3] { 0, 0, 0 });
 
-            if (link.SWComponents.Count == 0)
+            if (link.ExportComponents.Count == 0)
             {
                 return;
             }
 
-            ModelDoc2 mainCompdoc = link.SWComponents[0].GetModelDoc2();
+            ModelDoc2 mainCompdoc = link.ExportComponents[0].GetModelDoc2();
 
             // [ R, G, B, Ambient, Diffuse, Specular, Shininess, Transparency, Emission ]
             double[] values = mainCompdoc.MaterialPropertyValues;
@@ -970,7 +979,7 @@ namespace SW2URDF.URDFExport
             double zMin = Double.MaxValue;
             double[] points;
 
-            foreach (Component2 comp in nonLocalizedChild.SWComponents)
+            foreach (Component2 comp in nonLocalizedChild.ExportComponents)
             {
                 // Returns box as [ XCorner1, YCorner1, ZCorner1, XCorner2, YCorner2, ZCorner2 ]
                 points = comp.GetBox(false, false);

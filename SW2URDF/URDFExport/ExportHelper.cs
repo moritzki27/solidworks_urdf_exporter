@@ -198,6 +198,9 @@ namespace SW2URDF.URDFExport
             logger.Info("Hiding all components");
             ActiveSWModel.Extension.SelectAll();
             ActiveSWModel.HideComponent2();
+            // Hiding a sub-assembly does not reliably hide its parts, so hide every part too
+            CommonSwOperations.HideComponents(ActiveSWModel,
+                SubassemblyResolver.GetAllLeafComponents(assyDoc));
 
             bool success = false;
             try
@@ -351,7 +354,7 @@ namespace SW2URDF.URDFExport
 
             logger.Info(link.Name + ": Reference geometry name " + names["component"]);
 
-            CommonSwOperations.ShowComponents(ActiveSWModel, link.SWComponents);
+            CommonSwOperations.ShowComponents(ActiveSWModel, link.ExportComponents);
 
             int saveOptions = (int)swSaveAsOptions_e.swSaveAsOptions_Silent |
                 (int)swSaveAsOptions_e.swSaveAsOptions_Copy;
@@ -422,7 +425,7 @@ namespace SW2URDF.URDFExport
                 logger.Warn("Exporting 3dxml for link " + link.Name + " failed with error " + errors +
                     " or warnings " + warnings);
             }
-            CommonSwOperations.HideComponents(ActiveSWModel, link.SWComponents);
+            CommonSwOperations.HideComponents(ActiveSWModel, link.ExportComponents);
         }
 
         private bool SaveSTL(Link link, string windowsMeshFilename)
@@ -439,7 +442,7 @@ namespace SW2URDF.URDFExport
 
             logger.Info(link.Name + ": Reference geometry name " + names["component"]);
 
-            CommonSwOperations.ShowComponents(ActiveSWModel, link.SWComponents);
+            CommonSwOperations.ShowComponents(ActiveSWModel, link.ExportComponents);
 
             int saveOptions = (int)swSaveAsOptions_e.swSaveAsOptions_Silent |
                 (int)swSaveAsOptions_e.swSaveAsOptions_Copy;
@@ -453,7 +456,7 @@ namespace SW2URDF.URDFExport
                 logger.Warn("Exporting STL for link " + link.Name + " failed with error " + errors + 
                     " or warnings " + warnings);
             }
-            CommonSwOperations.HideComponents(ActiveSWModel, link.SWComponents);
+            CommonSwOperations.HideComponents(ActiveSWModel, link.ExportComponents);
 
             bool success = CorrectSTLMesh(windowsMeshFilename);
             if (!success)
